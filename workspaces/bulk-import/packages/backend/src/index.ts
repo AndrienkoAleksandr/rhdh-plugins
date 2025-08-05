@@ -62,5 +62,9 @@ backend.add(import('@backstage/plugin-search-backend-module-techdocs'));
 backend.add(
   import('@red-hat-developer-hub/backstage-plugin-bulk-import-backend'),
 );
-
+backend.add(
+  import('@internal/plugin-scaffolder-backend-module-github-file-checker'),
+);
+backend.add(import('@backstage/plugin-scaffolder-backend-module-github'));
+backend.add(import('@roadiehq/scaffolder-backend-module-utils'));
 backend.start();
