@@ -58,6 +58,7 @@ import {
   findAllRepositories,
   findRepositoriesByOrganization,
 } from './handlers/repository';
+import { executeTemplate } from './handlers/scaffolder/execute-template';
 
 /**
  * Router Options
@@ -85,6 +86,7 @@ namespace Operations {
   export const CREATE_IMPORT_JOBS = 'createImportJobs';
   export const FIND_IMPORT_STATUS_BY_REPO = 'findImportStatusByRepo';
   export const DELETE_IMPORT_BY_REPO = 'deleteImportByRepo';
+  export const EXECUTE_TEMPLATE = 'executeTemplate';
 }
 
 /**
@@ -362,6 +364,33 @@ export async function createRouter(
         q.defaultBranch,
       );
       return res.status(response.statusCode).json(response.responseBody);
+    },
+  );
+
+  // todo: audit log
+  api.register(
+    Operations.EXECUTE_TEMPLATE,
+    async (
+      c: Context<Paths.ExecuteTemplate.RequestBody>,
+      req: Request,
+      res: Response,
+    ) => {
+      const {
+        templateName,
+        repositories = [],
+        optionalParameters = {},
+        useEnv = {},
+      } = c.request.requestBody;
+      const authorization = req.headers.authorization?.split(' ')[1];
+      const response = await executeTemplate(
+        discovery,
+        authorization,
+        templateName,
+        repositories,
+        optionalParameters,
+        useEnv,
+      );
+      return res.status(202).json(response);
     },
   );
 

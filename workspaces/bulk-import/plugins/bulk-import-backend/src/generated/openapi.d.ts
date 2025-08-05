@@ -53,6 +53,31 @@ declare namespace Components {
   namespace Schemas {
     export type ApprovalTool = 'GIT' | 'SERVICENOW';
     /**
+     * Execute Template Request
+     */
+    export interface ExecuteTemplateRequest {
+      /**
+       * The name of the scaffolder template to execute.
+       */
+      templateName: string;
+      /**
+       * A list of GitHub repository URLs to execute the template against.
+       */
+      repositories?: string[];
+      /**
+       * Optional key/value pairs to pass to the template.
+       */
+      optionalParameters?: {
+        [name: string]: any;
+      };
+      /**
+       * A map of template parameter names to environment variable names.
+       */
+      useEnv?: {
+        [name: string]: string;
+      };
+    }
+    /**
      * Import Job
      */
     export interface Import {
@@ -326,6 +351,17 @@ declare namespace Paths {
       export interface $500 {}
     }
   }
+  namespace ExecuteTemplate {
+    export type RequestBody =
+      /* Execute Template Request */ Components.Schemas.ExecuteTemplateRequest;
+    namespace Responses {
+      export interface $202 {
+        message?: string;
+        taskIds?: string[];
+      }
+      export interface $500 {}
+    }
+  }
   namespace FindAllImports {
     export interface HeaderParameters {
       'api-version'?: Parameters.ApiVersion;
@@ -355,8 +391,7 @@ declare namespace Paths {
       search?: Parameters.Search;
     }
     namespace Responses {
-      export type $200 =
-        /* Import Job with source it originates from */
+      export type $200 = /* Import Job with source it originates from */
         | Components.Schemas.SourceImport[]
         | /* Import Job List */ Components.Schemas.ImportJobListV2;
       export type $500 =
@@ -520,6 +555,14 @@ export interface OperationMethods {
     data?: any,
     config?: AxiosRequestConfig,
   ): OperationResponse<Paths.DeleteImportByRepo.Responses.$204>;
+  /**
+   * executeTemplate - Execute a scaffolder template for a list of repositories
+   */
+  'executeTemplate'(
+    parameters?: Parameters<UnknownParamsObject> | null,
+    data?: Paths.ExecuteTemplate.RequestBody,
+    config?: AxiosRequestConfig,
+  ): OperationResponse<Paths.ExecuteTemplate.Responses.$202>;
 }
 
 export interface PathsDictionary {
@@ -605,18 +648,16 @@ export interface PathsDictionary {
       config?: AxiosRequestConfig,
     ): OperationResponse<Paths.DeleteImportByRepo.Responses.$204>;
   };
+  ['/execute-template']: {
+    /**
+     * executeTemplate - Execute a scaffolder template for a list of repositories
+     */
+    'post'(
+      parameters?: Parameters<UnknownParamsObject> | null,
+      data?: Paths.ExecuteTemplate.RequestBody,
+      config?: AxiosRequestConfig,
+    ): OperationResponse<Paths.ExecuteTemplate.Responses.$202>;
+  };
 }
 
 export type Client = OpenAPIClient<OperationMethods, PathsDictionary>;
-
-export type ApprovalTool = Components.Schemas.ApprovalTool;
-export type Import = Components.Schemas.Import;
-export type ImportJobListV2 = Components.Schemas.ImportJobListV2;
-export type ImportRequest = Components.Schemas.ImportRequest;
-export type ImportStatus = Components.Schemas.ImportStatus;
-export type Organization = Components.Schemas.Organization;
-export type OrganizationList = Components.Schemas.OrganizationList;
-export type Repository = Components.Schemas.Repository;
-export type RepositoryList = Components.Schemas.RepositoryList;
-export type Source = Components.Schemas.Source;
-export type SourceImport = Components.Schemas.SourceImport;
