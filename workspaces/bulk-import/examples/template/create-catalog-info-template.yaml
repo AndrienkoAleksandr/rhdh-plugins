@@ -60,13 +60,12 @@ spec:
           apiVersion: backstage.io/v1alpha1
           kind: Component
           metadata:
-            # Ім'я компонента береться з назви репозиторію
+            # The component name is taken from the repository name.
             name: ${{ parameters.repoUrl.split('repo=')[1].split('&')[0] }}
             annotations:
-              # project-slug має бути у форматі OWNER_NAME/REPO_NAME
+              # project-slug has to be in format OWNER_NAME/REPO_NAME
               github.com/project-slug: ${{ parameters.repoUrl.split('owner=')[1] }}/${{ parameters.repoUrl.split('repo=')[1].split('&')[0] }}
           spec:
-            # Тип компонента за замовчуванням 'other', але ви можете змінити його на 'service', 'website' тощо.
             type: other
             lifecycle: unknown
             owner: ${{ parameters.owner }}

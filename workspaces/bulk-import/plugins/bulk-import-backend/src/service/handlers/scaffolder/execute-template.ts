@@ -78,12 +78,6 @@ export const executeTemplate = async (
       taskIds.push(taskId);
       logger.info(`Started scaffolder task ${taskId} for ${repoUrl}`);
     }
-  } else {
-    const taskId = await execute({
-      ...allParameters,
-    });
-    taskIds.push(taskId);
-    logger.info(`Started scaffolder task ${taskId}`);
   }
 
   return {
