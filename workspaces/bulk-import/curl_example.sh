@@ -9,15 +9,11 @@ taskId=$(curl -X POST http://localhost:7007/api/bulk-import/execute-template \
 -H "Content-Type: application/json" \
 -H "Authorization: Bearer ${token}" \
 -d '{
-  "templateName": "add-catalog-info",
   "repositories": [
     "github.com?repo=shellImages&owner=AndrienkoAleksandr"
   ],
   "templateParameters": {
     "owner": "user:default/andrienkoaleksandr"
-  },
-  "useEnv": {
-    "envParam1": "MY_ENV_VAR"
   }
 }' | jq -r '.taskIds[0]')
 

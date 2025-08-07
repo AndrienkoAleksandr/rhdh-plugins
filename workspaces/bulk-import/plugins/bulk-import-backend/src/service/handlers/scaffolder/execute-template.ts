@@ -27,7 +27,6 @@ export const executeTemplate = async (
   config: Config,
   repositories: string[],
   templateParameters: Record<string, any>,
-  useEnv: Record<string, string>,
 ) => {
   const taskIds = [];
   const scaffolderUrl = await discovery.getBaseUrl('scaffolder');
@@ -36,13 +35,6 @@ export const executeTemplate = async (
     targetPluginId: 'scaffolder',
   });
   const templateName = config.getString('bulkImport.importTemplate');
-
-  const allParameters = { ...templateParameters };
-  for (const key in useEnv) {
-    if (Object.prototype.hasOwnProperty.call(useEnv, key)) {
-      allParameters[key] = process.env[useEnv[key]];
-    }
-  }
 
   const execute = async (values: Record<string, any>) => {
     const response = await fetch(`${scaffolderUrl}/v2/tasks`, {
@@ -73,7 +65,7 @@ export const executeTemplate = async (
     for (const repoUrl of repositories) {
       const taskId = await execute({
         repoUrl,
-        ...allParameters,
+        ...templateParameters,
       });
       taskIds.push(taskId);
       logger.info(`Started scaffolder task ${taskId} for ${repoUrl}`);

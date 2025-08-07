@@ -52,12 +52,6 @@ declare namespace Components {
       templateParameters?: {
         [name: string]: any;
       };
-      /**
-       * A map of template parameter names to environment variable names.
-       */
-      useEnv?: {
-        [name: string]: string;
-      };
     }
     /**
      * Import Job

@@ -1026,17 +1026,10 @@ const OPENAPI = `
             },
             "description": "A list of GitHub repository URLs to execute the template against."
           },
-          "optionalParameters": {
+          "templateParameters": {
             "type": "object",
             "additionalProperties": true,
             "description": "Optional key/value pairs to pass to the template."
-          },
-          "useEnv": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "string"
-            },
-            "description": "A map of template parameter names to environment variable names."
           }
         }
       }
