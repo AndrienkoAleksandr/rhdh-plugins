@@ -376,7 +376,7 @@ export async function createRouter(
     ) => {
       const {
         repositories = [],
-        optionalParameters = {},
+        templateParameters = {},
         useEnv = {},
       } = c.request.requestBody;
       const response = await executeTemplate(
@@ -385,7 +385,7 @@ export async function createRouter(
         auth,
         config,
         repositories,
-        optionalParameters,
+        templateParameters,
         useEnv,
       );
       return res.status(202).json(response);

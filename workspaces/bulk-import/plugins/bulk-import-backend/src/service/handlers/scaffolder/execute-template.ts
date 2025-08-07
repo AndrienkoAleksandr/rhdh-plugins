@@ -26,7 +26,7 @@ export const executeTemplate = async (
   auth: AuthService,
   config: Config,
   repositories: string[],
-  optionalParameters: Record<string, any>,
+  templateParameters: Record<string, any>,
   useEnv: Record<string, string>,
 ) => {
   const taskIds = [];
@@ -37,7 +37,7 @@ export const executeTemplate = async (
   });
   const templateName = config.getString('bulkImport.importTemplate');
 
-  const allParameters = { ...optionalParameters };
+  const allParameters = { ...templateParameters };
   for (const key in useEnv) {
     if (Object.prototype.hasOwnProperty.call(useEnv, key)) {
       allParameters[key] = process.env[useEnv[key]];

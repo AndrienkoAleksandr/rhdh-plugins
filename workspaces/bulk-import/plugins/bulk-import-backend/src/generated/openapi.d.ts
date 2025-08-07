@@ -49,7 +49,7 @@ declare namespace Components {
       /**
        * Optional key/value pairs to pass to the template.
        */
-      optionalParameters?: {
+      templateParameters?: {
         [name: string]: any;
       };
       /**

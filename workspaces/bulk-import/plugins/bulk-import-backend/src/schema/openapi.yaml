@@ -717,7 +717,7 @@ components:
           items:
             type: string
           description: A list of GitHub repository URLs to execute the template against.
-        optionalParameters:
+        templateParameters:
           type: object
           additionalProperties: true
           description: Optional key/value pairs to pass to the template.

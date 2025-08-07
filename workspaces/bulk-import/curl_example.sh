@@ -13,7 +13,7 @@ taskId=$(curl -X POST http://localhost:7007/api/bulk-import/execute-template \
   "repositories": [
     "github.com?repo=shellImages&owner=AndrienkoAleksandr"
   ],
-  "optionalParameters": {
+  "templateParameters": {
     "owner": "user:default/andrienkoaleksandr"
   },
   "useEnv": {
