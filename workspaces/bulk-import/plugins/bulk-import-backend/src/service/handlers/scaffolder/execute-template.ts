@@ -13,12 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { DiscoveryService, LoggerService } from '@backstage/backend-plugin-api';
+import {
+  AuthService,
+  DiscoveryService,
+  LoggerService,
+} from '@backstage/backend-plugin-api';
 
 export const executeTemplate = async (
   discovery: DiscoveryService,
   logger: LoggerService,
-  authorization: string | undefined,
+  auth: AuthService,
   templateName: string,
   repositories: string[],
   optionalParameters: Record<string, any>,
@@ -26,6 +30,10 @@ export const executeTemplate = async (
 ) => {
   const taskIds = [];
   const scaffolderUrl = await discovery.getBaseUrl('scaffolder');
+  const { token } = await auth.getPluginRequestToken({
+    onBehalfOf: await auth.getOwnServiceCredentials(),
+    targetPluginId: 'scaffolder',
+  });
 
   const allParameters = { ...optionalParameters };
   for (const key in useEnv) {
@@ -39,7 +47,7 @@ export const executeTemplate = async (
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${authorization}`,
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
         templateRef: `template:default/${templateName}`,

@@ -380,11 +380,10 @@ export async function createRouter(
         optionalParameters = {},
         useEnv = {},
       } = c.request.requestBody;
-      const authorization = req.headers.authorization?.split(' ')[1];
       const response = await executeTemplate(
         discovery,
         logger,
-        authorization,
+        auth,
         templateName,
         repositories,
         optionalParameters,
