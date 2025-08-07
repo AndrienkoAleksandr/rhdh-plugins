@@ -367,7 +367,6 @@ export async function createRouter(
     },
   );
 
-  // todo: audit log
   api.register(
     Operations.EXECUTE_TEMPLATE,
     async (
@@ -481,6 +480,11 @@ async function createAuditorEventByOperationId(
       auditorEvent = await auditCreateEvent(auditor, 'import-write', req, {
         actionType: 'create',
         dryRun: req.query.dryRun,
+      });
+      break;
+    case Operations.EXECUTE_TEMPLATE:
+      auditorEvent = await auditCreateEvent(auditor, 'import-write', req, {
+        actionType: 'create',
       });
       break;
     case Operations.FIND_IMPORT_STATUS_BY_REPO:
