@@ -13,18 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { getVoidLogger } from '@backstage/backend-common';
-import { DiscoveryService } from '@backstage/backend-plugin-api';
+import { DiscoveryService, LoggerService } from '@backstage/backend-plugin-api';
 
 export const executeTemplate = async (
   discovery: DiscoveryService,
+  logger: LoggerService,
   authorization: string | undefined,
   templateName: string,
   repositories: string[],
   optionalParameters: Record<string, any>,
   useEnv: Record<string, string>,
 ) => {
-  const logger = getVoidLogger();
   const taskIds = [];
   const scaffolderUrl = await discovery.getBaseUrl('scaffolder');
 

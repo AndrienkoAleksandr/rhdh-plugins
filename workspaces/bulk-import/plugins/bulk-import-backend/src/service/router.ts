@@ -384,6 +384,7 @@ export async function createRouter(
       const authorization = req.headers.authorization?.split(' ')[1];
       const response = await executeTemplate(
         discovery,
+        logger,
         authorization,
         templateName,
         repositories,
