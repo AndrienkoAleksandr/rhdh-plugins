@@ -4,7 +4,6 @@
 
 | Name                   | Type                  | Description                                                       | Notes                        |
 | ---------------------- | --------------------- | ----------------------------------------------------------------- | ---------------------------- |
-| **templateName**       | **String**            | The name of the scaffolder template to execute.                   | [default to null]            |
 | **repositories**       | **List**              | A list of GitHub repository URLs to execute the template against. | [optional] [default to null] |
 | **optionalParameters** | [**Map**](AnyType.md) | Optional key/value pairs to pass to the template.                 | [optional] [default to null] |
 | **useEnv**             | **Map**               | A map of template parameter names to environment variable names.  | [optional] [default to null] |

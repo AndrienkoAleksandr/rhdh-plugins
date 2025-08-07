@@ -1,18 +1,4 @@
-/*
- * Copyright Red Hat, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// GENERATED FILE. DO NOT EDIT.
 
 // eslint-disable
 // prettier-ignore
@@ -56,10 +42,6 @@ declare namespace Components {
      * Execute Template Request
      */
     export interface ExecuteTemplateRequest {
-      /**
-       * The name of the scaffolder template to execute.
-       */
-      templateName: string;
       /**
        * A list of GitHub repository URLs to execute the template against.
        */
@@ -391,7 +373,8 @@ declare namespace Paths {
       search?: Parameters.Search;
     }
     namespace Responses {
-      export type $200 = /* Import Job with source it originates from */
+      export type $200 =
+        /* Import Job with source it originates from */
         | Components.Schemas.SourceImport[]
         | /* Import Job List */ Components.Schemas.ImportJobListV2;
       export type $500 =
@@ -661,3 +644,16 @@ export interface PathsDictionary {
 }
 
 export type Client = OpenAPIClient<OperationMethods, PathsDictionary>;
+
+export type ApprovalTool = Components.Schemas.ApprovalTool;
+export type ExecuteTemplateRequest = Components.Schemas.ExecuteTemplateRequest;
+export type Import = Components.Schemas.Import;
+export type ImportJobListV2 = Components.Schemas.ImportJobListV2;
+export type ImportRequest = Components.Schemas.ImportRequest;
+export type ImportStatus = Components.Schemas.ImportStatus;
+export type Organization = Components.Schemas.Organization;
+export type OrganizationList = Components.Schemas.OrganizationList;
+export type Repository = Components.Schemas.Repository;
+export type RepositoryList = Components.Schemas.RepositoryList;
+export type Source = Components.Schemas.Source;
+export type SourceImport = Components.Schemas.SourceImport;

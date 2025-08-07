@@ -18,7 +18,7 @@ spec:
         repoUrl:
           type: string
           title: Repository URL (GitHub)
-          description: "Format: github.com?repo=REPO_NAME&owner=OWNER_NAME"
+          description: 'Format: github.com?repo=REPO_NAME&owner=OWNER_NAME'
         owner:
           type: string
           title: Backstage Owner

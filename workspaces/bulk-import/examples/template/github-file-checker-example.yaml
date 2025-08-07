@@ -36,14 +36,14 @@ spec:
       if: ${{ steps.checkFile.output.isFileExists }}
       action: debug:log
       input:
-        message: "The file at ${{ parameters.filePath }} exists in ${{ parameters.repoUrl }}"
+        message: 'The file at ${{ parameters.filePath }} exists in ${{ parameters.repoUrl }}'
 
     - id: logResultIfFileDoesNotExist
       name: Log if file does not exist
       if: ${{ not steps.checkFile.output.isFileExists }}
       action: debug:log
       input:
-        message: "The file at ${{ parameters.filePath }} does NOT exist in ${{ parameters.repoUrl }}"
+        message: 'The file at ${{ parameters.filePath }} does NOT exist in ${{ parameters.repoUrl }}'
 
   output:
     links:

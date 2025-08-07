@@ -1018,14 +1018,7 @@ const OPENAPI = `
       "ExecuteTemplateRequest": {
         "title": "Execute Template Request",
         "type": "object",
-        "required": [
-          "templateName"
-        ],
         "properties": {
-          "templateName": {
-            "type": "string",
-            "description": "The name of the scaffolder template to execute."
-          },
           "repositories": {
             "type": "array",
             "items": {

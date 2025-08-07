@@ -371,11 +371,10 @@ export async function createRouter(
     Operations.EXECUTE_TEMPLATE,
     async (
       c: Context<Paths.ExecuteTemplate.RequestBody>,
-      req: Request,
+      _req: Request,
       res: Response,
     ) => {
       const {
-        templateName,
         repositories = [],
         optionalParameters = {},
         useEnv = {},
@@ -384,7 +383,7 @@ export async function createRouter(
         discovery,
         logger,
         auth,
-        templateName,
+        config,
         repositories,
         optionalParameters,
         useEnv,

@@ -18,12 +18,13 @@ import {
   DiscoveryService,
   LoggerService,
 } from '@backstage/backend-plugin-api';
+import { Config } from '@backstage/config';
 
 export const executeTemplate = async (
   discovery: DiscoveryService,
   logger: LoggerService,
   auth: AuthService,
-  templateName: string,
+  config: Config,
   repositories: string[],
   optionalParameters: Record<string, any>,
   useEnv: Record<string, string>,
@@ -34,6 +35,7 @@ export const executeTemplate = async (
     onBehalfOf: await auth.getOwnServiceCredentials(),
     targetPluginId: 'scaffolder',
   });
+  const templateName = config.getString('bulkImport.importTemplate');
 
   const allParameters = { ...optionalParameters };
   for (const key in useEnv) {
