@@ -294,12 +294,13 @@ async function resolveReposDefaultBranches(
   );
 }
 
-function repoUrlFromLocation(loc: string) {
-  const split = loc.split('/blob/');
-  if (split.length < 2) {
+function repoUrlFromLocation(loc: string): string | undefined {
+  // support both GitHub (/blob/) and GitLab (/-/blob/)
+  const match = loc.match(/^(.*?)\/(?:-\/)?blob\//);
+  if (!match) {
     return undefined;
   }
-  return split[0];
+  return match[1];
 }
 
 function findImportCandidates(
@@ -318,7 +319,10 @@ function findImportCandidates(
     if (!defaultBranch) {
       continue;
     }
-    if (loc !== `${repoUrl}/blob/${defaultBranch}/${catalogFilename}`) {
+
+    const githubPath = `${repoUrl}/blob/${defaultBranch}/${catalogFilename}`;
+    const gitlabPath = `${repoUrl}/-/blob/${defaultBranch}/${catalogFilename}`;
+    if (loc !== githubPath && loc !== gitlabPath) {
       // Because users can use the "Register existing component" workflow to register a Location
       // using any file path in the repo, we consider a repository as an Import Location only
       // if it is at the root of the repository, because that is what the import PR ultimately does.

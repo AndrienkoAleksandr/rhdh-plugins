@@ -39,7 +39,15 @@ export function getCatalogUrl(
   repoUrl: string,
   defaultBranch: string = 'main',
 ): string {
-  return `${repoUrl}/blob/${defaultBranch}/${getCatalogFilename(config)}`;
+  const catalogFilename = getCatalogFilename(config);
+
+  //  Gitlab url format
+  if (/gitlab/i.test(repoUrl)) {
+    return `${repoUrl}/-/blob/${defaultBranch}/${catalogFilename}`;
+  }
+
+  // GitHub url format by default
+  return `${repoUrl}/blob/${defaultBranch}/${catalogFilename}`;
 }
 
 export function filterLocations(
