@@ -122,29 +122,33 @@ const filterAuthorizedWorkflowIds = async (
   workflowIds: string[],
 ): Promise<string[]> => {
   const credentials = await httpAuth.credentials(request);
-  const genericWorkflowPermissionDecision = await permissionsSvc.authorize(
-    [{ permission: orchestratorWorkflowPermission }],
-    {
-      credentials,
-    },
-  );
-
-  if (genericWorkflowPermissionDecision[0].result === AuthorizeResult.ALLOW) {
-    // The user can see all workflows
-    return workflowIds;
-  }
 
   const specificWorkflowRequests: AuthorizePermissionRequest[] =
     workflowIds.map(workflowId => ({
       permission: orchestratorWorkflowSpecificPermission(workflowId),
     }));
 
-  const decisions = await permissionsSvc.authorize(specificWorkflowRequests, {
-    credentials,
-  });
+  // Run both generic and specific permission checks in parallel
+  const [genericWorkflowPermissionDecision, specificDecisions] =
+    await Promise.all([
+      permissionsSvc.authorize(
+        [{ permission: orchestratorWorkflowPermission }],
+        {
+          credentials,
+        },
+      ),
+      permissionsSvc.authorize(specificWorkflowRequests, {
+        credentials,
+      }),
+    ]);
 
+  if (genericWorkflowPermissionDecision[0].result === AuthorizeResult.ALLOW) {
+    return workflowIds;
+  }
+
+  // Filter based on specific permissions
   return workflowIds.filter(
-    (_, idx) => decisions[idx].result === AuthorizeResult.ALLOW,
+    (_, idx) => specificDecisions[idx].result === AuthorizeResult.ALLOW,
   );
 };
 
@@ -399,6 +403,7 @@ function setupInternalRoutes(
         );
 
         const workflows = await filterAuthorizedWorkflows(
+          // here!!!
           req,
           permissions,
           httpAuth,
@@ -838,6 +843,7 @@ function setupInternalRoutes(
         const allWorkflowIds = routerApi.v2.getWorkflowIds();
         const authorizedWorkflowIds: string[] =
           await filterAuthorizedWorkflowIds(
+            // here
             req,
             permissions,
             httpAuth,
