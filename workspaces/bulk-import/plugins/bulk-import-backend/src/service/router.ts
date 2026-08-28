@@ -460,7 +460,7 @@ export async function createRouter(
 
   api.register(
     Operations.FIND_ALL_ORCHESTRATOR_WORKFLOW_IMPORTS,
-    async (c: Context, _req: Request, res: Response) => {
+    async (c: Context, req: Request, res: Response) => {
       const { pageNumber, pageSize, search, sortColumn, sortOrder } =
         getFindImportsParams(c);
       const imports: SourceImport[] = [];
@@ -470,6 +470,7 @@ export async function createRouter(
         search,
       );
 
+      const credentials = await httpAuth.credentials(req);
       for (const repo of repositories.data) {
         const response = await findOrchestratorImportStatusByRepo(
           {
@@ -478,6 +479,7 @@ export async function createRouter(
             orchestratorWorkflowDao,
             discovery,
             auth,
+            credentials,
           },
           repo.url,
           true,
@@ -563,7 +565,7 @@ export async function createRouter(
     Operations.CREATE_ORCHESTRATOR_WORKFLOW_JOBS,
     async (
       c: Context<Paths.CreateImportJobs.RequestBody>,
-      _req: Request,
+      req: Request,
       res: Response,
     ) => {
       if (!orchestratorWorkflowId) {
@@ -576,6 +578,7 @@ export async function createRouter(
         orchestratorWorkflowId,
         discovery,
         auth,
+        credentials: await httpAuth.credentials(req),
         requestBody: c.request.requestBody,
         orchestratorWorkflowDao,
         orchestratorRepositoryDao,
@@ -583,7 +586,7 @@ export async function createRouter(
         gitlabApiService,
       });
 
-      res.status(response.statusCode).json(response.responseBody);
+      return res.status(response.statusCode).json(response.responseBody);
     },
   );
 
@@ -643,7 +646,7 @@ export async function createRouter(
 
   api.register(
     Operations.FIND_ORCHESTRATOR_IMPORT_STATUS_BY_REPO,
-    async (c: Context, _req: Request, res: Response) => {
+    async (c: Context, req: Request, res: Response) => {
       const q: Paths.FindImportStatusByRepo.QueryParameters = {
         ...c.request.query,
       };
@@ -657,6 +660,7 @@ export async function createRouter(
           orchestratorWorkflowDao,
           discovery,
           auth,
+          credentials: await httpAuth.credentials(req),
         },
         q.repo,
       );

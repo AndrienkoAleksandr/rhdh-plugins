@@ -308,4 +308,39 @@ describe('router tests', () => {
       },
     );
   });
+
+  describe('POST /orchestrator-workflows', () => {
+    it('records auditor success with the handler status after the response is sent', async () => {
+      const { mockCatalogClient } = useTestData();
+      const auditorMock = mockServices.auditor.mock();
+      const backendServer = await startBackendServer(
+        mockCatalogClient,
+        AuthorizeResult.ALLOW,
+        {
+          bulkImport: {
+            orchestratorWorkflow: 'test-workflow-id',
+          },
+        },
+        undefined,
+        [auditorMock.factory],
+      );
+
+      const response = await request(backendServer)
+        .post('/api/bulk-import/orchestrator-workflows')
+        .send([]);
+
+      expect(response.status).toEqual(400);
+
+      const resultIndex = auditorMock.createEvent.mock.calls.findIndex(
+        ([event]) => event.eventId === 'import-write',
+      );
+      expect(resultIndex).toBeGreaterThanOrEqual(0);
+      const auditorEvent =
+        await auditorMock.createEvent.mock.results[resultIndex].value;
+      expect(auditorEvent.success).toHaveBeenCalledWith({
+        meta: { responseStatus: 400 },
+      });
+      expect(auditorEvent.fail).not.toHaveBeenCalled();
+    });
+  });
 });

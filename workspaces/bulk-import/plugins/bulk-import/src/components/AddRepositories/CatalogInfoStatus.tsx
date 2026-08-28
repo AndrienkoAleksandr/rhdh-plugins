@@ -18,6 +18,8 @@ import { useEffect } from 'react';
 
 import { StatusRunning } from '@backstage/core-components';
 
+import FailIcon from '@mui/icons-material/ErrorOutline';
+import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { useFormikContext } from 'formik';
 
@@ -26,12 +28,14 @@ import { useTranslation } from '../../hooks/useTranslation';
 import {
   AddRepositoriesFormValues,
   AddRepositoryData,
+  ErrorType,
   ImportFlow,
   RepositoryStatus,
   TaskStatus,
 } from '../../types';
 import {
   areAllRowsSelected,
+  getCustomisedErrorMessage,
   getImportStatus,
 } from '../../utils/repository-utils';
 import { PreviewFile } from '../PreviewFile/PreviewFile';
@@ -56,8 +60,14 @@ export const CatalogInfoStatus = ({
   prUrl?: string;
 }) => {
   const { t } = useTranslation();
-  const { values, setFieldValue } =
-    useFormikContext<AddRepositoriesFormValues>();
+  const {
+    values,
+    setFieldValue,
+    status: formStatus,
+  } = useFormikContext<AddRepositoriesFormValues>();
+  const repoSubmitError = Object.values(
+    (formStatus?.errors as ErrorType) || {},
+  ).find(s => s?.repository?.name === data.repoName);
 
   useEffect(() => {
     if (
@@ -120,6 +130,28 @@ export const CatalogInfoStatus = ({
           taskOrWorkflowId,
         )}
       </Typography>
+    );
+  }
+
+  if (repoSubmitError) {
+    const submitErrorMessage = getCustomisedErrorMessage(
+      repoSubmitError.error.message,
+      (key: string) => t(key as any, {}),
+    );
+    return (
+      <Tooltip title={submitErrorMessage.message}>
+        <Typography
+          component="span"
+          style={{ display: 'flex', alignItems: 'baseline' }}
+          title={submitErrorMessage.message}
+        >
+          <FailIcon
+            color="error"
+            style={{ verticalAlign: 'sub', paddingTop: '7px' }}
+          />
+          {t('workflows.workflowAborted')}
+        </Typography>
+      </Tooltip>
     );
   }
 

@@ -49,7 +49,8 @@ import { UserSettingsPage } from '@backstage/plugin-user-settings';
 import {
   OrchestratorPage,
   orchestratorTranslations,
-} from '@red-hat-developer-hub/backstage-plugin-orchestrator';
+} from '@red-hat-developer-hub/backstage-plugin-orchestrator/legacy';
+import { orchestratorFormWidgetsPlugin } from '@red-hat-developer-hub/backstage-plugin-orchestrator-form-widgets/legacy';
 import {
   BulkImportPage,
   bulkImportTranslations,
@@ -65,6 +66,7 @@ import { searchPage } from './components/search/SearchPage';
 
 const app = createApp({
   apis,
+  plugins: [orchestratorFormWidgetsPlugin],
   __experimentalTranslations: {
     availableLanguages: ['en', 'de', 'es', 'fr', 'it', 'ja'],
     resources: [bulkImportTranslations, orchestratorTranslations],

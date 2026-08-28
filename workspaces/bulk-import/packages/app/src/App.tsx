@@ -33,6 +33,10 @@ import { navModule } from './modules/nav';
 import bulkImportPlugin, {
   bulkImportTranslationsModule,
 } from '@red-hat-developer-hub/backstage-plugin-bulk-import';
+import orchestratorPlugin, {
+  orchestratorTranslationsModule,
+} from '@red-hat-developer-hub/backstage-plugin-orchestrator';
+import orchestratorFormWidgetsPlugin from '@red-hat-developer-hub/backstage-plugin-orchestrator-form-widgets';
 
 // Import core Backstage plugins (NFS versions)
 import catalogPlugin from '@backstage/plugin-catalog/alpha';
@@ -90,6 +94,8 @@ const app = createApp({
     catalogPlugin,
     scaffolderPlugin,
     bulkImportPlugin,
+    orchestratorPlugin,
+    orchestratorFormWidgetsPlugin,
     userSettingsPlugin,
     // Sign-in module with GitHub and GitLab providers
     signInModule,
@@ -97,6 +103,7 @@ const app = createApp({
     rhdhThemeModule,
     // Translations module (language selector configured via app-config.yaml)
     bulkImportTranslationsModule,
+    orchestratorTranslationsModule,
     // Custom sidebar with logo
     navModule,
   ],

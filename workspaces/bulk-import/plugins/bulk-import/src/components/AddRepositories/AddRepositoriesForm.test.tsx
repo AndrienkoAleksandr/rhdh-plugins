@@ -161,6 +161,74 @@ describe('AddRepositoriesForm', () => {
     expect(screen.queryByTestId('preview-pullrequest-sidebar')).toBeFalsy();
   });
 
+  it('should show per-repository import errors from formik status', async () => {
+    const githubAppError =
+      "Orchestrator import requires a GitHub App installation token for 'https://github.com/AndrienkoAleksandr/AcsiiDoctorJavaPrj'. Configure integrations.github with an App that has access to this repository; classic personal access tokens are not forwarded in orchestrator mode.";
+    (useDrawer as jest.Mock).mockImplementation(initial => ({
+      initial,
+      setOpenDrawer: jest.fn(),
+      setDrawerData: jest.fn(),
+    }));
+    (useFormikContext as jest.Mock).mockReturnValue({
+      values: {
+        repositoryType: RepositorySelection.Repository,
+      },
+      setFieldValue: jest.fn(),
+      status: {
+        errors: {
+          'AndrienkoAleksandr/AcsiiDoctorJavaPrj': {
+            repository: {
+              name: 'AcsiiDoctorJavaPrj',
+              organization: 'AndrienkoAleksandr',
+            },
+            catalogEntityName: '',
+            error: {
+              message: [githubAppError],
+            },
+          },
+        },
+      },
+    });
+    render(
+      <Router>
+        <TestApiProvider
+          apis={[
+            [identityApiRef, mockIdentityApi],
+            [bulkImportApiRef, mockBulkImportApi],
+            [errorApiRef, new MockErrorApi()],
+            [
+              configApiRef,
+              new MockConfigApi({
+                catalog: {
+                  import: {
+                    entityFilename: 'test.yaml',
+                  },
+                },
+                integrations: {
+                  github: [
+                    {
+                      host: 'github.com',
+                      token: 'test-token',
+                    },
+                  ],
+                },
+              }),
+            ],
+          ]}
+        >
+          <QueryClientProvider client={queryClient}>
+            <AddRepositories />
+          </QueryClientProvider>
+        </TestApiProvider>
+      </Router>,
+    );
+
+    expect(screen.getByTestId('import-job-errors')).toBeInTheDocument();
+    expect(
+      screen.getByText(/GitHub App installation token/),
+    ).toBeInTheDocument();
+  });
+
   it('should show the drawer when openDrawer is true', async () => {
     (useDrawer as jest.Mock).mockReturnValue({
       openDrawer: true,

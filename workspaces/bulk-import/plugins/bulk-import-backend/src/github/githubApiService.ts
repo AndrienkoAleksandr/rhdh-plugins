@@ -152,7 +152,12 @@ export class GithubApiService implements GitApiService {
   async getAppInstallationCredentials(
     repoUrl: string,
   ): Promise<{ token: string }> {
-    const creds = await this.getCredentials(repoUrl);
+    let creds: { token: string; type: GithubCredentialType };
+    try {
+      creds = await this.getCredentials(repoUrl);
+    } catch (error) {
+      throw await this.toAppInstallationCredentialError(repoUrl, error);
+    }
     if (creds.type !== 'app') {
       throw new Error(
         `Orchestrator import requires a GitHub App installation token for '${repoUrl}'. ` +
@@ -163,6 +168,55 @@ export class GithubApiService implements GitApiService {
     return {
       token: creds.token,
     };
+  }
+
+  private githubAppsConfigured(): boolean {
+    return (
+      this.config
+        .getOptionalConfigArray('integrations.github')
+        ?.some(c => (c.getOptionalConfigArray('apps')?.length ?? 0) > 0) ??
+      false
+    );
+  }
+
+  private async toAppInstallationCredentialError(
+    repoUrl: string,
+    error: unknown,
+  ): Promise<Error> {
+    if (!this.githubAppsConfigured()) {
+      return error instanceof Error ? error : new Error(String(error));
+    }
+    const owner = gitUrlParse(repoUrl).owner;
+    const original = error instanceof Error ? error.message : String(error);
+    let installedOn = '';
+    try {
+      const ghConfig = this.integrations.github.byUrl(repoUrl)?.config;
+      if (ghConfig) {
+        const installs =
+          await this.githubCredentialsProvider.getAllAppInstallations(ghConfig);
+        const logins = [
+          ...new Set(
+            installs.flatMap(install => {
+              const login = install.account?.login;
+              return login ? [login] : [];
+            }),
+          ),
+        ];
+        installedOn =
+          logins.length > 0
+            ? ` This App is currently installed on: ${logins.join(', ')}.`
+            : ' This App currently has no installations.';
+      }
+    } catch {
+      // Keep the shorter message if listing installations fails.
+    }
+    return new Error(
+      `Could not issue a GitHub App installation token for '${repoUrl}'. ` +
+        `Install the App on '${owner}' and grant it repository access.` +
+        `${installedOn} ` +
+        `If you just added GITHUB_APP_* environment variables, fully restart yarn start so the process loads them. ` +
+        `Original error: ${original}`,
+    );
   }
 
   async getRepositoryFromIntegrations(repoUrl: string): Promise<{

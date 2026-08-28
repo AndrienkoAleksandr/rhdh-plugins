@@ -26,7 +26,11 @@ import Typography from '@mui/material/Typography';
 import { useFormikContext } from 'formik';
 
 import { useTranslation } from '../../hooks/useTranslation';
-import { AddRepositoriesFormValues, PullRequestPreviewData } from '../../types';
+import {
+  AddRepositoriesFormValues,
+  ErrorType,
+  PullRequestPreviewData,
+} from '../../types';
 import { getImageForIconClass } from '../../utils/icons';
 import { useDrawer } from '../DrawerContext';
 import { PreviewFileSidebar } from '../PreviewFile/PreviewFileSidebar';
@@ -37,8 +41,9 @@ export const AddRepositories = ({ error }: { error?: any }) => {
   const { t } = useTranslation();
   const configApi = useApi(configApiRef);
   const { openDrawer, setOpenDrawer, drawerData } = useDrawer();
-  const { setFieldValue, values } =
+  const { setFieldValue, values, status } =
     useFormikContext<AddRepositoriesFormValues>();
+  const jobErrors = Object.values((status?.errors as ErrorType) || {});
 
   // Check if integrations are configured
   const hasGitHubIntegration = configApi.has('integrations.github');
@@ -183,6 +188,26 @@ export const AddRepositories = ({ error }: { error?: any }) => {
                   error?.message ??
                   error?.err ??
                   t('errors.failedToCreatePullRequest')}
+              </Alert>
+            </div>
+          )}
+          {jobErrors.length > 0 && (
+            <div
+              style={{ paddingBottom: '10px' }}
+              data-testid="import-job-errors"
+            >
+              <Alert severity="error">
+                <AlertTitle>{t('errors.errorOccurred')}</AlertTitle>
+                {jobErrors.map(jobError => (
+                  <Typography
+                    key={`${jobError.repository.organization}/${jobError.repository.name}`}
+                    component="div"
+                  >
+                    {jobError.repository.organization}/
+                    {jobError.repository.name}:{' '}
+                    {jobError.error.message.join('\n')}
+                  </Typography>
+                ))}
               </Alert>
             </div>
           )}

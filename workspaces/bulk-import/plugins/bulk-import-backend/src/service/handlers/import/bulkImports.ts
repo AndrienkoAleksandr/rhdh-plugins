@@ -16,6 +16,7 @@
 
 import type {
   AuthService,
+  BackstageCredentials,
   DiscoveryService,
   LoggerService,
 } from '@backstage/backend-plugin-api';
@@ -984,6 +985,7 @@ export async function findOrchestratorImportStatusByRepo(
     orchestratorWorkflowDao: OrchestratorWorkflowDao;
     discovery: DiscoveryService;
     auth: AuthService;
+    credentials: BackstageCredentials;
   },
   repoUrl: string,
   skipWorkflows?: boolean,
@@ -1020,7 +1022,7 @@ export async function findOrchestratorImportStatusByRepo(
       if (workflow.instanceId) {
         const baseUrl = await deps.discovery.getBaseUrl('orchestrator');
         const { token } = await deps.auth.getPluginRequestToken({
-          onBehalfOf: await deps.auth.getOwnServiceCredentials(),
+          onBehalfOf: deps.credentials,
           targetPluginId: 'orchestrator',
         });
         const orchestratorApi = new DefaultApi(new Configuration(), baseUrl);

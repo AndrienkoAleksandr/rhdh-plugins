@@ -13,7 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import type { AuthService } from '@backstage/backend-plugin-api';
+import type {
+  AuthService,
+  BackstageCredentials,
+} from '@backstage/backend-plugin-api';
 import { DiscoveryApi } from '@backstage/plugin-permission-common';
 
 import {
@@ -37,6 +40,7 @@ export type CreateWorkflowImportJobsArgs = {
   orchestratorWorkflowId: string;
   discovery: DiscoveryApi;
   auth: AuthService;
+  credentials: BackstageCredentials;
   requestBody: ImportRequest[];
   orchestratorWorkflowDao: OrchestratorWorkflowDao;
   orchestratorRepositoryDao: RepositoryDao<'orchestrator_repositories'>;
@@ -51,6 +55,7 @@ export async function createWorkflowImportJobs(
     orchestratorWorkflowId,
     discovery,
     auth,
+    credentials,
     requestBody,
     orchestratorWorkflowDao,
     orchestratorRepositoryDao,
@@ -67,8 +72,9 @@ export async function createWorkflowImportJobs(
 
   const result: Components.Schemas.Import[] = [];
   const baseUrl = await discovery.getBaseUrl('orchestrator');
+  // On-behalf-of the user: Orchestrator UserInfoService rejects service principals.
   const { token } = await auth.getPluginRequestToken({
-    onBehalfOf: await auth.getOwnServiceCredentials(),
+    onBehalfOf: credentials,
     targetPluginId: 'orchestrator',
   });
   const apiConfig = new Configuration();

@@ -15,7 +15,7 @@
  */
 
 import type { LoggerService } from '@backstage/backend-plugin-api';
-import { mockServices } from '@backstage/backend-test-utils';
+import { mockCredentials, mockServices } from '@backstage/backend-test-utils';
 import { NotFoundError } from '@backstage/errors';
 import { catalogServiceMock } from '@backstage/plugin-catalog-node/testUtils';
 
@@ -1741,15 +1741,17 @@ describe('bulkimports.ts unit tests', () => {
           orchestratorWorkflowDao: mockOrchestratorWorkflowDao,
           discovery: mockDiscovery,
           auth: mockAuth,
+          credentials: mockCredentials.user(),
         },
         'https://github.com/test-org/test-repo',
       );
 
       expect(result.statusCode).toBe(200);
       expect(mockAuth.getPluginRequestToken).toHaveBeenCalledWith({
-        onBehalfOf: expect.anything(),
+        onBehalfOf: mockCredentials.user(),
         targetPluginId: 'orchestrator',
       });
+      expect(mockAuth.getOwnServiceCredentials).not.toHaveBeenCalled();
       expect(result.responseBody?.workflow?.workflowId).toBe(
         'workflow-instance-123',
       );
@@ -1789,6 +1791,7 @@ describe('bulkimports.ts unit tests', () => {
           orchestratorWorkflowDao: mockOrchestratorWorkflowDao,
           discovery: mockDiscovery,
           auth: mockAuth,
+          credentials: mockCredentials.user(),
         },
         'https://github.com/test-org/test-repo',
       );
@@ -1833,6 +1836,7 @@ describe('bulkimports.ts unit tests', () => {
           orchestratorWorkflowDao: mockOrchestratorWorkflowDao,
           discovery: mockDiscovery,
           auth: mockAuth,
+          credentials: mockCredentials.user(),
         },
         'https://github.com/test-org/test-repo',
       );
@@ -1892,6 +1896,7 @@ describe('bulkimports.ts unit tests', () => {
           orchestratorWorkflowDao: mockOrchestratorWorkflowDao,
           discovery: mockDiscovery,
           auth: mockAuth,
+          credentials: mockCredentials.user(),
         },
         'https://github.com/test-org/test-repo',
         true,

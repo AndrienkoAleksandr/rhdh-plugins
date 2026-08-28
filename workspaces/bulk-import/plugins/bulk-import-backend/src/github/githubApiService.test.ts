@@ -472,18 +472,28 @@ describe('GithubApiService tests', () => {
       );
     });
 
-    it('propagates the error when no token is configured', async () => {
+    it('explains how to recover when a GitHub App is configured but no installation token is issued', async () => {
       jest
         .spyOn(githubApiService, 'getCredentials')
         .mockRejectedValue(
           new Error(`Token not configured for 'github' provider`),
         );
+      jest
+        .spyOn(
+          CustomGithubCredentialsProvider.prototype,
+          'getAllAppInstallations',
+        )
+        .mockResolvedValue([{ account: { login: 'cloud-eda' } }] as Awaited<
+          ReturnType<CustomGithubCredentialsProvider['getAllAppInstallations']>
+        >);
 
       await expect(
         githubApiService.getAppInstallationCredentials(
           'https://github.com/backstage/A',
         ),
-      ).rejects.toThrow(`Token not configured for 'github' provider`);
+      ).rejects.toThrow(
+        /Install the App on 'backstage'[\s\S]*currently installed on: cloud-eda/,
+      );
     });
   });
 
