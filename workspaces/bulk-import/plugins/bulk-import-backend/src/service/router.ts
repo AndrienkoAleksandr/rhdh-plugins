@@ -583,7 +583,7 @@ export async function createRouter(
         gitlabApiService,
       });
 
-      res.status(response.statusCode).json(response.responseBody);
+      return res.status(response.statusCode).json(response.responseBody);
     },
   );
 
